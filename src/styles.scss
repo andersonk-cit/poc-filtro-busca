@@ -1,1 +1,12 @@
 /* Add application styles & imports to this file! */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+.center {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  min-width: 900px;
+}
+
+table {
+  width: 900px;
+}

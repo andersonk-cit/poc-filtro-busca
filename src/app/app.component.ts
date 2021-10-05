@@ -1,10 +1,13 @@
+import { HttpParams } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, VERSION } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 export interface Library {
   name: string;
-  latest: string;
+  description: string;
+  version: string;
 }
 
 @Component({
@@ -14,16 +17,32 @@ export interface Library {
 })
 export class AppComponent implements OnInit {
   searchValue: string;
-  readonly CDN_API_URL = 'https://api.cdnj.com/libraries';
-  results$: Observable<any>;
+  readonly CDN_API_URL = 'https://api.cdnjs.com/libraries';
+  libraries: Library[] = [];
+  dataSource = [];
+  loading = false;
+  columns = ['name', 'description', 'version'];
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {}
 
-  onSearch() {
-    console.log();
-
-    this.results$ = this.http.get(this.CDN_API_URL);
+  onSearch($event: string) {
+    this.loading = true;
+    console.log($event);
+    const fields = 'name,description,version';
+    let params = new HttpParams();
+    params = params.set('search', $event);
+    params = params.set('fields', fields);
+    this.http
+      .get(this.CDN_API_URL, { params })
+      .pipe(
+        tap((res: any) => console.log(res.results)),
+        map((res: any) => res.results)
+      )
+      .subscribe((res) => {
+        this.libraries = res;
+        this.loading = false;
+      });
   }
 }
