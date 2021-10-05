@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
-  tap,
   map,
   filter,
   distinctUntilChanged,
@@ -27,10 +26,10 @@ export class SearchComponent implements OnInit {
   onValueChanges() {
     this.search.valueChanges
       .pipe(
-        map((value: string) => value.trim()),
-        filter((value) => value.length > 2),
-        debounceTime(300),
-        distinctUntilChanged()
+        map((value: string) => value.trim()), //remove espaços
+        filter((value) => value.length > 2), //aplica filtro para permitir a busca apenas com pelo menos 3 caracteres
+        debounceTime(300), //aplica um delay em ms
+        distinctUntilChanged() //só permite valor diferente do anterior buscado
       )
       .subscribe((value) => {
         this.searchEvent.emit(value);
